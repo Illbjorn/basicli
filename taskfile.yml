@@ -11,7 +11,7 @@ vars:
   ##############################################################################
   # Repository Info
   repo_owner: illbjorn
-  repo_name: conv
+  repo_name: basicli
 
 # dotenv: [.env]
 interval: 250ms
