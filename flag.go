@@ -2,9 +2,8 @@ package basicli
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
-
-	"github.com/illbjorn/conv"
 )
 
 type Flag[P *T, T basic] struct {
@@ -32,7 +31,14 @@ func NewFlag[P *T, T basic](v string, ptr P) (Flag[P, T], error) {
 				return f, ErrRequiredAndDefault
 			}
 			instruction = strings.TrimPrefix(instruction, "required=")
-			f.Required = conv.Cbool(instruction)
+			var err error
+			if f.Required, err = strconv.ParseBool(instruction); err != nil {
+				return f, fmt.Errorf(
+					"failed to parse required directive value ('%s') as boolean: %s.",
+					instruction,
+					err,
+				)
+			}
 
 		// Default Value
 		case strings.HasPrefix(instruction, "default="):
