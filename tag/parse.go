@@ -1,66 +1,66 @@
 package tag
 
-func Parse(v string) tag {
-  var t tag
-  if len(v) == 0 {
-    return t
-  }
+func Parse(v string) Tag {
+	var t Tag
+	if len(v) == 0 {
+		return t
+	}
 
-  scanner := tagScanner{v: v, i: -1}
+	scanner := TagScanner{v: v, i: -1}
 
-  for {
-    next := scanner.peek(1)
-    if next == '\x00' {
-      scanner.adv()
-      scanner.mark(markerID)
-      break
-    }
+	for {
+		next := scanner.Peek(1)
+		if next == '\x00' {
+			scanner.Adv()
+			scanner.Mark(markerID)
+			break
+		}
 
-    switch {
-    case next == '=':
-      // '='
-      scanner.adv()
+		switch {
+		case next == '=':
+			// '='
+			scanner.Adv()
 
-      // Determine the type of marker we need to set
-      buffered := scanner.buffered()
-      var markerKind int
-      if buffered == "default" {
-        markerKind = markerDefault
+			// Determine the type of marker we need to set
+			buffered := scanner.Buffered()
+			var markerKind int
+			if buffered == "default" {
+				markerKind = markerDefault
 
-      } else if buffered == "required" {
-        markerKind = markerRequired
+			} else if buffered == "required" {
+				markerKind = markerRequired
 
-      } else {
-        panic(buffered)
-      }
+			} else {
+				panic(buffered)
+			}
 
-      // Manually move the chains
-      scanner.bump()
+			// Manually move the chains
+			scanner.Bump()
 
-      // Consume to ',' or EOF
-      for {
-        next = scanner.peek(1)
-        if next == ',' || next == '\x00' {
-          scanner.adv() // ','
-          scanner.mark(markerKind)
-          break
-        }
-        scanner.adv()
-      }
-      continue
+			// Consume to ',' or EOF
+			for {
+				next = scanner.Peek(1)
+				if next == ',' || next == '\x00' {
+					scanner.Adv() // ','
+					scanner.Mark(markerKind)
+					break
+				}
+				scanner.Adv()
+			}
+			continue
 
-    case next == ',':
-      // Mark the name/alias
-      scanner.adv()
-      scanner.mark(markerID)
+		case next == ',':
+			// Mark the name/alias
+			scanner.Adv()
+			scanner.Mark(markerID)
 
-    default:
-      scanner.adv()
-    }
-  }
+		default:
+			scanner.Adv()
+		}
+	}
 
-  // Imprint the tag and return
-  scanner.imprint(&t)
+	// Imprint the tag and return
+	scanner.Imprint(&t)
 
-  return t
+	return t
 }
