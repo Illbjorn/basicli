@@ -40,7 +40,11 @@ func dispatch[T any](rv reflect.Value, args []string) error {
 		if len(outputs) == 0 {
 			return nil
 		}
-		return outputs[0].Interface().(error)
+		maybeErr := outputs[0].Interface()
+		if maybeErr == nil {
+			return nil
+		}
+		return maybeErr.(error)
 
 	case len(args) == 1:
 		// On the last (or first) positional arg, what we're after can either be:
