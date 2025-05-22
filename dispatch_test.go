@@ -1,17 +1,15 @@
 package basicli
 
 import (
-	"fmt"
-	"os"
-	"testing"
+  "fmt"
+  "os"
+  "testing"
 
-	"gotest.tools/v3/assert"
+  "gotest.tools/v3/assert"
 )
 
-var check = assert.Check
-
 type MockDispatch struct {
-	CMD MockDispatchInner `basicli:"cmd"`
+  CMD MockDispatchInner `basicli:"cmd"`
 }
 
 func (MockDispatch) GoodButAlsoBad() error { return fmt.Errorf("oh no!") }
@@ -23,27 +21,23 @@ type MockDispatchInner struct{}
 func (MockDispatchInner) Hello() error { return nil }
 
 func TestDispatch(t *testing.T) {
-	var md MockDispatch
+  var md MockDispatch
 
-	// Call the default `Exec` method
-	os.Args = []string{""}
-	err := Dispatch(&md)
-	check(t, err == nil)
+  // Call the default `Exec` method
+  os.Args = []string{""}
+  assert.NilError(t, Dispatch(&md))
 
-	// Call the MockDispatch.Inner.Hello() method
-	os.Args = []string{"", "cmd", "hello"}
-	assert.NilError(t, Dispatch(&md))
-	check(t, err == nil)
+  // Call the MockDispatch.Inner.Hello() method
+  os.Args = []string{"", "cmd", "hello"}
+  assert.NilError(t, Dispatch(&md))
 
-	// Call the MockDispatch.Bad() method, expect an error since the function
-	// signature is illegal
-	os.Args = []string{"", "bad"}
-	err = Dispatch(&md)
-	check(t, err != nil)
+  // Call the MockDispatch.Bad() method, expect an error since the function
+  // signature is illegal
+  os.Args = []string{"", "bad"}
+  assert.Error(t, Dispatch(&md), "expected a single error return value, found ['[]reflect.Value']: []")
 
-	// Call the MockDispatch.GoodButAlsoBad() method, expect an error returned by
-	// the function body naturally
-	os.Args = []string{"", "goodbutalsobad"}
-	err = Dispatch(&md)
-	check(t, err != nil)
+  // Call the MockDispatch.GoodButAlsoBad() method, expect an error returned by
+  // the function body naturally
+  os.Args = []string{"", "goodbutalsobad"}
+  assert.Error(t, Dispatch(&md), "oh no!")
 }

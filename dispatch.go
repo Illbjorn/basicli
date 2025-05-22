@@ -11,6 +11,9 @@ import (
 	"github.com/illbjorn/basicli/tag"
 )
 
+// Dispatch recurses through nested structs described by the positional args
+// provided. Once all positional args have been accounted for, an `Exec` method
+// with signature `func()` is looked up and dispatched.
 func Dispatch[P *T, T any](v P) error {
 	args, _ := argv.Parse(os.Args[1:])
 
@@ -62,6 +65,7 @@ func dispatch[T any](rv reflect.Value, args []string) error {
 			if strings.EqualFold(sought, name) {
 				// Call it!
 				res := method.Call(nil)
+				// TODO: Produce a better error message here
 				if len(res) != 1 {
 					return fmt.Errorf(
 						"expected a single error return value, found ['%[1]T']: %[1]v",

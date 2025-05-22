@@ -9,19 +9,19 @@ import "reflect"
 // pointer, the returned reflect.Value will be the dereferenced value the
 // interface contained.
 func Concrete(v reflect.Value) reflect.Value {
-	if v.Kind() == reflect.Pointer {
-		if v.IsNil() {
-			return reflect.Value{}
-		}
-		return Concrete(v.Elem())
-	}
+  if v.Kind() == reflect.Pointer {
+    if v.IsNil() {
+      return reflect.Value{}
+    }
+    return Concrete(v.Elem())
+  }
 
-	if v.Kind() == reflect.Interface {
-		if v.IsNil() {
-			return reflect.Value{}
-		}
-		return Concrete(v.Elem())
-	}
+  if v.Kind() == reflect.Interface {
+    if v.IsNil() {
+      return reflect.Value{}
+    }
+    return Concrete(v.Elem())
+  }
 
-	return v
+  return v
 }
